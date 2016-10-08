@@ -11,7 +11,7 @@ except:
       PUSHER_APP_ID = os.environ['PUSHER_APP_ID']
       PUSHER_KEY = os.environ['PUSHER_KEY']
       PUSHER_SECRET = os.environ['PUSHER_SECRET']
-      PARSE_APP_ID = os.environ['Application ID']
-      PARSE_REST_KEY = os.environ['REST API key']
+      PARSE_APP_ID = os.environ['okc38F6tHLcaJuYUQP5dJHqhOPHxRvWohtLW1b5r']
+      PARSE_REST_KEY = os.environ['rWU5Bwsk4Th84dfxJYN2IeOAj6kOrfJqCMIMtPac']
     except:
         pass
