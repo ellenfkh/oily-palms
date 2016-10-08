@@ -1,0 +1,8 @@
+*.pyc
+*.egg-info
+.coverage
+build
+dist
+venv*
+.DS_Store
+cover/*
