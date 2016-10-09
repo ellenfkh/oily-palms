@@ -42,8 +42,8 @@ def hello_world():
 
 @app.route('/incidents')
 def show_incidents():
-    incidents = query_db("SELECT * from incident", ())
-    print incidents
+    #incidents = query_db("SELECT * from incident JOIN events ON incident.event=events.event", ())
+    incidents = [(1, 1, 1, 1, 1)]
     return render_template("incidents.html",  incidents=incidents)
 
 @app.route('/twilio', methods=['POST'])
@@ -52,6 +52,7 @@ def inbound_sms():
     inbound_message = request.form.get("Body")
     phone_number = request.form.get("From")
     # Get incident using phone number
+    eventId = "1234"
 
     if (inbound_message.lower()== "yes"):
         responseString = "What type of incident occurred? "
@@ -63,15 +64,19 @@ def inbound_sms():
 
     elif (inbound_message == "1"):
         # Write BAD fire to database
+        query_db("INSERT into incident values({}, {}, {}, 1)".format(eventId, datetime.datetime.now(), eventId))
         response.message("Thank you for your assistance. Reported intentional fire.")
     elif (inbound_message == "2"):
         # Write NATURAL fire
+        query_db("INSERT into incident values({}, {}, {}, 2)".format(eventId, datetime.datetime.now(), eventId))
         response.message("Thank you for your assistance. Reported natural fire.")
     elif (inbound_message == "3"):
         # Write MYSTERY fire
+        query_db("INSERT into incident values({}, {}, {}, 3)".format(eventId, datetime.datetime.now(), eventId))
         response.message("Thank you for your assistance. Reported MYSTERY fire.")
     elif (inbound_message == "4"):
         # Write MYSTERY fire
+        query_db("INSERT into incident values({}, {}, {}, 4)".format(eventId, datetime.datetime.now(), eventId))
         response.message("Thank you for your assistance. Reported logging.")
     else:
         # FIXME: continue nagging
