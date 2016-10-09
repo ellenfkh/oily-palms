@@ -23,14 +23,14 @@ def hello_world():
       latLongPairs.append(problematicTransect["attributes"])
 
     # Find cellphone numbers with x threshold distance for each lat long pair
-    phone_numbers = query_db("call getPhonesByDate(\"%s\")" % str(datetime.date(2008, 3, 21)), ())
+    phone_numbers = query_db("call getPhonesByDate(\"%s\");" % str(datetime.date(2016, 10, 8)), ())
     
     # Dedupe
     phone_numbers = set(phone_numbers)
 
     # Loop over numbers and send messages
     for phone_number in phone_numbers:
-      print(phone_number)
+      print("Texting phone: %s" % phone_number)
       client = TwilioRestClient(account_sid, auth_token)
      
       client.messages.create(
@@ -53,6 +53,15 @@ def inbound_sms():
     phone_number = request.form.get("From")
     # Get incident using phone number
     eventId = "1234"
+    eventIds = query_db("call getEventsByPhone(\"%s\");" % phone_number, ())
+    print eventIds
+    if len(eventIds):
+        eventId = eventIds[0][1]
+
+    currentDate = datetime.datetime.now().date().isoformat()
+    print currentDate
+
+    print("Got text: %s from: %s" % (inbound_message.lower(), phone_number))
 
     if (inbound_message.lower()== "yes"):
         responseString = "What type of incident occurred? "
@@ -64,24 +73,28 @@ def inbound_sms():
 
     elif (inbound_message == "1"):
         # Write BAD fire to database
-        query_db("INSERT into incident values({}, {}, {}, 1)".format(eventId, datetime.datetime.now(), eventId))
+        query_db("INSERT into incident values({}, \"{}\", {}, 1)".format(eventId, currentDate, eventId), ())
         response.message("Thank you for your assistance. Reported intentional fire.")
     elif (inbound_message == "2"):
         # Write NATURAL fire
-        query_db("INSERT into incident values({}, {}, {}, 2)".format(eventId, datetime.datetime.now(), eventId))
+        query_db("INSERT into incident values({}, \"{}\", {}, 2)".format(eventId, currentDate, eventId), ())
         response.message("Thank you for your assistance. Reported natural fire.")
     elif (inbound_message == "3"):
         # Write MYSTERY fire
-        query_db("INSERT into incident values({}, {}, {}, 3)".format(eventId, datetime.datetime.now(), eventId))
+        query_db("INSERT into incident values({}, \"{}\", {}, 3)".format(eventId, currentDate, eventId), ())
         response.message("Thank you for your assistance. Reported MYSTERY fire.")
     elif (inbound_message == "4"):
         # Write MYSTERY fire
-        query_db("INSERT into incident values({}, {}, {}, 4)".format(eventId, datetime.datetime.now(), eventId))
+        query_db("INSERT into incident values({}, \"{}\", {}, 4)".format(eventId, currentDate, eventId), ())
         response.message("Thank you for your assistance. Reported logging.")
+    elif (inbound_message.lower() == "no"):
+        response.message("Thank you for your assistance.")
     else:
         # FIXME: continue nagging
         response.message("Unknown code. Please try again.")
     
+    print("Sending text: %s to: %s" % (str(response), phone_number))
+
     return Response(str(response), mimetype="application/xml"), 200
 
 def callproc_db(procedure, args):
@@ -98,6 +111,7 @@ def callproc_db(procedure, args):
             finalResult = []
             for result in cursor.stored_results():
                 finalResult.append(result.fetchall())
+            conn.commit()
             
     except Error as e:
         print(e)
@@ -116,12 +130,16 @@ def query_db(query, args):
                                        password='vm4mAeCrP78w')
         if conn.is_connected():
             cursor = conn.cursor()
-            cursor.execute(query, args)
-            ret = [row for row in cursor]
+            results = cursor.execute(query, args, multi=True)
+            for cur in results:
+              if cur.with_rows:
+                for row in cur.fetchall():
+                  ret.append(row)
 
-            finalResult = []
-            for result in cursor.stored_results():
-                finalResult.append(result.fetchall())
+#            finalResult = []
+#            for result in cursor.stored_results():
+#                finalResult.append(result.fetchall())
+            conn.commit()
                
     except Error as e:
         print(e)
