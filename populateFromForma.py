@@ -9,18 +9,13 @@ latLongPairs = []
 for problematicTransect in requestJson["features"]:
   latLongPairs.append(problematicTransect["attributes"])
 
-print latLongPairs
+#print latLongPairs
 
-
-for pair in latLongPairs:
-    query_db("call insertFormaEvent(\"%s\", %s, %s)" % 
-            str(datetime.date(2008, 3, 21), 
-                pair["lat"],
-                pair["lon"]),
-            ())
 
 def query_db(query, args):
     ret = []
+    print query
+    print args
     try:
         conn = mysql.connector.connect(host='127.0.0.1',
                                        db='oily-palm',
@@ -28,8 +23,12 @@ def query_db(query, args):
                                        password='vm4mAeCrP78w')
         if conn.is_connected():
             cursor = conn.cursor()
-            cursor.execute(query, args)
+            cursor.callproc(query, args)
             ret = [row for row in cursor]
+
+        for result in cursor.stored_results():
+            print result.fetchall()
+        conn.commit()
             
     except Error as e:
         print(e)
@@ -38,3 +37,18 @@ def query_db(query, args):
         conn.close()
 
     return ret
+
+for pair in latLongPairs:
+    print "calling insert forma event: \"{}\", {}, {}".format( 
+            datetime.date(2008, 3, 21), 
+                pair["lat"],
+		pair["lon"])
+
+    # result = query_db("dummy", ())
+
+
+    result = query_db("insertFormaEvent", ("2008-03-21", 
+                pair["lat"],
+		pair["lon"] ))
+
+    print result
