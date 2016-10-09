@@ -23,10 +23,10 @@ try:
     cursor = conn.cursor();
 
     for pair in latLongPairs:
-        cursur.callproc("insertFormaEvent",
+        cursor.callproc("insertFormaEvent",
                 datetime.datetime(2008, 3, 21).date(),
-                pair[lat],
-                pair[lon] )
+                pair["lat"],
+                pair["lon"] )
 
 except Error as e:
     print(e)

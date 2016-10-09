@@ -25,7 +25,7 @@ def hello_world():
     print latLongPairs
 
     # Find cellphone numbers with x threshold distance for each lat long pair
-    phone_numbers = query_db("all getPhonesByDate(%s)" % str(datetime.date(2008, 3, 21)), ())
+    phone_numbers = query_db("call getPhonesByDate(\"%s\")" % str(datetime.date(2008, 3, 21)), ())
     
     # Dedupe
     phone_numbers = set(phone_numbers)
