@@ -11,25 +11,30 @@ for problematicTransect in requestJson["features"]:
 
 print latLongPairs
 
-try:
-    print('HALLPPP')
-    conn = mysql.connector.connect(host='127.0.0.1',
-                                   db='oily-palm',
-                                   user='root',
-                                   password='vm4mAeCrP78w')
-    if conn.is_connected():
-        print('Connected to MySQL database')
 
-    cursor = conn.cursor();
-
-    for pair in latLongPairs:
-        cursor.callproc("insertFormaEvent",
-                datetime.datetime(2008, 3, 21).date(),
+for pair in latLongPairs:
+    query_db("call insertFormaEvent(\"%s\", %s, %s)" % 
+            str(datetime.date(2008, 3, 21), 
                 pair["lat"],
-                pair["lon"] )
+                pair["lon"]),
+            ())
 
-except Error as e:
-    print(e)
+def query_db(query, args):
+    ret = []
+    try:
+        conn = mysql.connector.connect(host='127.0.0.1',
+                                       db='oily-palm',
+                                       user='root',
+                                       password='vm4mAeCrP78w')
+        if conn.is_connected():
+            cursor = conn.cursor()
+            cursor.execute(query, args)
+            ret = [row for row in cursor]
+            
+    except Error as e:
+        print(e)
 
-finally:
-    conn.close()
+    finally:
+        conn.close()
+
+    return ret
