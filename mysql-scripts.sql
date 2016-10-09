@@ -39,11 +39,11 @@ END //
 
 
 
-DROP PROCEDURE IF EXISTS dummy;
+DROP PROCEDURE IF EXISTS getIncidents;
 
-CREATE PROCEDURE dummy()
+CREATE PROCEDURE getIncidents()
 BEGIN
-    SELECT * FROM events;
+    SELECT * FROM incident JOIN events on incident.event=events.event;
 END //
 
 

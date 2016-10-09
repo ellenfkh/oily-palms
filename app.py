@@ -42,7 +42,7 @@ def hello_world():
 
 @app.route('/incidents')
 def show_incidents():
-    incidents = query_db("SELECT * FROM incident", [])
+    incidents = query_db("call getIncidents()", ())
     print incidents
     return render_template("incidents.html",  incidents=incidents)
 
