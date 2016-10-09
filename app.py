@@ -3,9 +3,12 @@ import requests
 import json
 from twilio.rest import TwilioRestClient
 from twilio import twiml
+import credentials
+import mysql.connector
+from mysql.connector import Error 
 
-account_sid = 'ACf4daa67b8b3b6fee914264639cb44b77'
-auth_token = '6f1de39cfcc67864dfed0c1295284de9'
+account_sid = credentials.login['sid']
+auth_token = credentials.login['token']
 
 app = Flask(__name__)
 
@@ -20,10 +23,27 @@ def hello_world():
 
     print latLongPairs
     # Find cellphone numbers with x threshold distance for each lat long pair
+    
+    try:
+        conn = mysql.connector.connect(host='localhost',
+                                       database='python_mysql',
+                                       user='root',
+                                       password='vm4mAeCrP78w')
+        if conn.is_connected():
+            print('Connected to MySQL database')
+ 
+    except Error as e:
+        print(e)
+ 
+    #finally:
+        #conn.close()
+
+
     # Dedupe
     # Loop over numbers and send messages
 
     client = TwilioRestClient(account_sid, auth_token)
+ 
     
    # client.messages.create(
    #    to="+12142548650",
@@ -41,13 +61,13 @@ def inbound_sms():
 
     if (inbound_message == "yes"):
         response.message("What type of incident occurred? Reply '1' for intentional fire, '2' for naturally caused fire, '3' for logging.")
-    else if (response.message == "1"):
+    elif (inbound_message == "1"):
         # Write BAD fire to database
 	response.message("Thank you for your assistance.")
-    else if (response.message == "2"):
+    elif (inbound_message == "2"):
         # Write NATURAL fire
 	response.message("Thank you for your assistance.")
-    else if (response.message == "3"):
+    elif (inbound_message == "3"):
 	response.message("Thank you for your assistance.")
     
     return Response(str(response), mimetype="application/xml"), 200
