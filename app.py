@@ -60,15 +60,28 @@ def inbound_sms():
     # Get incident using phone number
 
     if (inbound_message == "yes"):
-        response.message("What type of incident occurred? Reply '1' for intentional fire, '2' for naturally caused fire, '3' for logging.")
+        responseString = "What type of incident occurred? "
+        responseString += "Reply '1' for intentional fire, "
+        responseString += "'2' for naturally caused fire, "
+        responseString += "'3' for fire with unknown cause fire, "
+        responseString += "'4' for logging."
+        response.message(responseString)
+
     elif (inbound_message == "1"):
         # Write BAD fire to database
-	response.message("Thank you for your assistance.")
+        response.message("Thank you for your assistance. Reported intentional fire.")
     elif (inbound_message == "2"):
         # Write NATURAL fire
-	response.message("Thank you for your assistance.")
+        response.message("Thank you for your assistance. Reported natural fire.")
     elif (inbound_message == "3"):
-	response.message("Thank you for your assistance.")
+        # Write MYSTERY fire
+        response.message("Thank you for your assistance. Reported MYSTERY fire.")
+    elif (inbound_message == "4"):
+        # Write MYSTERY fire
+        response.message("Thank you for your assistance. Reported logging.")
+    else:
+        # FIXME: continue nagging
+        response.message("Unknown code. Please try again.")
     
     return Response(str(response), mimetype="application/xml"), 200
 
