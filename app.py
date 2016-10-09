@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template
 import requests
 import json
 from twilio.rest import TwilioRestClient
@@ -42,6 +42,12 @@ def hello_world():
       ) 
     return 'Hello World!'
 
+@app.route('/incidents')
+def show_incidents():
+    incidents = query_db("SELECT * FROM incident", [])
+    print incidents
+    return render_template("hello.html",  incidents)
+
 @app.route('/twilio', methods=['POST'])
 def inbound_sms():
     response = twiml.Response()
@@ -53,7 +59,7 @@ def inbound_sms():
         responseString = "What type of incident occurred? "
         responseString += "Reply '1' for intentional fire, "
         responseString += "'2' for naturally caused fire, "
-        responseString += "'3' for fire with unknown cause fire, "
+        responseString += "'3' for fire with unknown cause, "
         responseString += "'4' for logging."
         response.message(responseString)
 
