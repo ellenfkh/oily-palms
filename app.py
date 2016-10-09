@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, render_template
 import requests
 import json
 from twilio.rest import TwilioRestClient
@@ -6,6 +6,7 @@ from twilio import twiml
 import credentials
 import mysql.connector
 from mysql.connector import Error 
+import datetime
 
 account_sid = credentials.login['sid']
 auth_token = credentials.login['token']
@@ -24,7 +25,7 @@ def hello_world():
     print latLongPairs
 
     # Find cellphone numbers with x threshold distance for each lat long pair
-    phone_numbers = query_db("getPhonesByDate", (datetime.date(2008, 3, 21),))
+    phone_numbers = query_db("all getPhonesByDate(%s)" % str(datetime.date(2008, 3, 21)), ())
     
     # Dedupe
     phone_numbers = set(phone_numbers)
@@ -41,6 +42,12 @@ def hello_world():
       ) 
     return 'Hello World!'
 
+@app.route('/incidents')
+def show_incidents():
+    incidents = query_db("SELECT * FROM incident", [])
+    print incidents
+    return render_template("hello.html",  incidents)
+
 @app.route('/twilio', methods=['POST'])
 def inbound_sms():
     response = twiml.Response()
@@ -52,7 +59,7 @@ def inbound_sms():
         responseString = "What type of incident occurred? "
         responseString += "Reply '1' for intentional fire, "
         responseString += "'2' for naturally caused fire, "
-        responseString += "'3' for fire with unknown cause fire, "
+        responseString += "'3' for fire with unknown cause, "
         responseString += "'4' for logging."
         response.message(responseString)
 

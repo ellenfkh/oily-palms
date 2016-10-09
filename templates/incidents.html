@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Incidents</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <table>
+    <th>
+        <td>Date</td>
+        <td>Event Id</td>
+    </th>
+    {% for incident in incidents %}
+    <tr>
+        <td>{{ incident.date }}</td>
+        <td>{{ incident.eventId }}</td>
+    </tr>
+    {% endfor %}
+    </ul>
+    </table>
+</body>
+</html>
