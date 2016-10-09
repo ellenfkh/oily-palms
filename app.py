@@ -22,34 +22,23 @@ def hello_world():
       latLongPairs.append(problematicTransect["attributes"])
 
     print latLongPairs
+
     # Find cellphone numbers with x threshold distance for each lat long pair
+    phone_numbers = query_db("getPhonesByDate", (datetime.date(2008, 3, 21),))
     
-    try:
-        conn = mysql.connector.connect(host='127.0.0.1',
-                                       db='oily-palm',
-                                       user='root',
-                                       password='vm4mAeCrP78w')
-        if conn.is_connected():
-            print('Connected to MySQL database')
- 
-    except Error as e:
-        print(e)
- 
-    #finally:
-        #conn.close()
-
-
     # Dedupe
-    # Loop over numbers and send messages
+    phone_numbers = set(phone_numbers)
 
-    client = TwilioRestClient(account_sid, auth_token)
- 
-    
-   # client.messages.create(
-   #    to="+12142548650",
-   #    from_="+13106834844",
-   #    body="A deforestation incident was reported within five kilometers of your home. Are you aware of this incident? Reply 'yes' or 'no'."
-   # ) 
+    # Loop over numbers and send messages
+    for phone_number in phone_numbers:
+      print(phone_number)
+      client = TwilioRestClient(account_sid, auth_token)
+     
+      client.messages.create(
+         to=phone_number,
+         from_="+13106834844",
+         body="A deforestation incident was reported within five kilometers of your home. Are you aware of this incident? Reply 'yes' or 'no'."
+      ) 
     return 'Hello World!'
 
 @app.route('/twilio', methods=['POST'])
@@ -84,6 +73,27 @@ def inbound_sms():
         response.message("Unknown code. Please try again.")
     
     return Response(str(response), mimetype="application/xml"), 200
+
+def query_db(query, args):
+    ret = []
+    try:
+        conn = mysql.connector.connect(host='127.0.0.1',
+                                       db='oily-palm',
+                                       user='root',
+                                       password='vm4mAeCrP78w')
+        if conn.is_connected():
+            cursor = conn.cursor()
+            cursor.execute(query, args)
+            ret = [row for row in cursor]
+            
+    except Error as e:
+        print(e)
+
+    finally:
+        conn.close()
+
+    return ret
+
 
 if __name__ == '__main__':
     app.run(debug=True)
