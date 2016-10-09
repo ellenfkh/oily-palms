@@ -22,8 +22,6 @@ def hello_world():
     for problematicTransect in requestJson["features"]:
       latLongPairs.append(problematicTransect["attributes"])
 
-    print latLongPairs
-
     # Find cellphone numbers with x threshold distance for each lat long pair
     phone_numbers = query_db("call getPhonesByDate(\"%s\")" % str(datetime.date(2008, 3, 21)), ())
     
@@ -46,7 +44,7 @@ def hello_world():
 def show_incidents():
     incidents = query_db("SELECT * FROM incident", [])
     print incidents
-    return render_template("hello.html",  incidents)
+    return render_template("incidents.html",  incidents=incidents)
 
 @app.route('/twilio', methods=['POST'])
 def inbound_sms():
@@ -90,7 +88,7 @@ def query_db(query, args):
                                        password='vm4mAeCrP78w')
         if conn.is_connected():
             cursor = conn.cursor()
-            cursor.execute(query, args)
+            cursor.execute(query, args, multi=True)
             ret = [row for row in cursor]
             
     except Error as e:
