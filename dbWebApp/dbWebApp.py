@@ -56,5 +56,5 @@ api.add_resource(LocationQuery, '/nearby')
 api.add_resource(Incidents, '/reporting')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5050)
 
