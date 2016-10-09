@@ -25,8 +25,8 @@ def hello_world():
     # Find cellphone numbers with x threshold distance for each lat long pair
     
     try:
-        conn = mysql.connector.connect(host='localhost',
-                                       database='python_mysql',
+        conn = mysql.connector.connect(host='127.0.0.1',
+                                       db='oily-palm',
                                        user='root',
                                        password='vm4mAeCrP78w')
         if conn.is_connected():
