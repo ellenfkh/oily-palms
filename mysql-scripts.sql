@@ -6,7 +6,7 @@ DROP PROCEDURE IF EXISTS getPhonesByDate;
 
 CREATE PROCEDURE getPhonesByDate(IN date_IN DATE)
 BEGIN
-    SELECT phone
+    SELECT DISTINCT phone
     FROM (
         SELECT village
         FROM village JOIN events
