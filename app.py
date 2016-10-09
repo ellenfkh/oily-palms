@@ -59,7 +59,7 @@ def inbound_sms():
     phone_number = request.form.get("From")
     # Get incident using phone number
 
-    if (inbound_message == "yes"):
+    if (inbound_message.lower()== "yes"):
         responseString = "What type of incident occurred? "
         responseString += "Reply '1' for intentional fire, "
         responseString += "'2' for naturally caused fire, "
