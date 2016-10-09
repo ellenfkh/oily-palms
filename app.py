@@ -28,7 +28,7 @@ def hello_world():
    # client.messages.create(
    #    to="+12142548650",
    #    from_="+13106834844",
-   #    body="Hello Rachel!!!"
+   #    body="A deforestation incident was reported within five kilometers of your home. Are you aware of this incident? Reply 'yes' or 'no'."
    # ) 
     return 'Hello World!'
 
@@ -37,10 +37,19 @@ def inbound_sms():
     response = twiml.Response()
     inbound_message = request.form.get("Body")
     phone_number = request.form.get("From")
-    print request
-    print phone_number
+    # Get incident using phone number
+
+    if (inbound_message == "yes"):
+        response.message("What type of incident occurred? Reply '1' for intentional fire, '2' for naturally caused fire, '3' for logging.")
+    else if (response.message == "1"):
+        # Write BAD fire to database
+	response.message("Thank you for your assistance.")
+    else if (response.message == "2"):
+        # Write NATURAL fire
+	response.message("Thank you for your assistance.")
+    else if (response.message == "3"):
+	response.message("Thank you for your assistance.")
     
-    response.message("Yo what up!") 
     return Response(str(response), mimetype="application/xml"), 200
 
 if __name__ == '__main__':
