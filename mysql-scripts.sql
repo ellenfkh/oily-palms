@@ -37,3 +37,20 @@ BEGIN
         AND events.date = CURDATE();
 END //
 
+
+
+DROP PROCEDURE IF EXISTS dummy;
+
+CREATE PROCEDURE dummy()
+BEGIN
+    SELECT * FROM events;
+END //
+
+
+DROP PROCEDURE IF EXISTS insertFormaEvent;
+
+CREATE PROCEDURE insertFormaEvent(IN date_IN DATE, IN lat_IN DOUBLE, IN lon_IN DOUBLE)
+BEGIN
+    INSERT INTO events (date, source, lat, lon)
+    VALUES (date_IN, "forma", lat_IN, lon_IN );
+END //
