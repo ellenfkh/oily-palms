@@ -42,7 +42,7 @@ def hello_world():
 
 @app.route('/incidents')
 def show_incidents():
-    incidents = query_db("call getIncidents()", ())
+    incidents = query_db("SELECT * from incident", ())
     print incidents
     return render_template("incidents.html",  incidents=incidents)
 
@@ -79,6 +79,29 @@ def inbound_sms():
     
     return Response(str(response), mimetype="application/xml"), 200
 
+def callproc_db(procedure, args):
+    ret = []
+    try:
+        conn = mysql.connector.connect(host='127.0.0.1',
+                                       db='oily-palm',
+                                       user='root',
+                                       password='vm4mAeCrP78w')
+        if conn.is_connected():
+            cursor = conn.cursor()
+            cursor.callproc(procedure, args)
+
+            finalResult = []
+            for result in cursor.stored_results():
+                finalResult.append(result.fetchall())
+            
+    except Error as e:
+        print(e)
+
+    finally:
+        conn.close()
+
+    return ret
+
 def query_db(query, args):
     ret = []
     try:
@@ -88,9 +111,13 @@ def query_db(query, args):
                                        password='vm4mAeCrP78w')
         if conn.is_connected():
             cursor = conn.cursor()
-            cursor.execute(query, args, multi=True)
+            cursor.execute(query, args)
             ret = [row for row in cursor]
-            
+
+            finalResult = []
+            for result in cursor.stored_results():
+                finalResult.append(result.fetchall())
+               
     except Error as e:
         print(e)
 
