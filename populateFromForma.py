@@ -1,5 +1,7 @@
 import requests
 import datetime
+import mysql.connector
+from mysql.connector import Error 
 
 r = requests.get('http://gis-gfw.wri.org/arcgis/rest/services/forest_change/MapServer/3/query?where=date%3D%272008-03-21%27&text=&objectIds=&time=&geometry=&geometryType=esriGeometryPoint&inSR=&spatialRel=esriSpatialRelIntersects&relationParam=&outFields=lat%2Clon&returnGeometry=false&returnTrueCurves=false&maxAllowableOffset=&geometryPrecision=&outSR=&returnIdsOnly=false&returnCountOnly=false&f=pjson')
 requestJson = r.json()
@@ -9,8 +11,8 @@ for problematicTransect in requestJson["features"]:
 
 print latLongPairs
 
-
 try:
+    print('HALLPPP')
     conn = mysql.connector.connect(host='127.0.0.1',
                                    db='oily-palm',
                                    user='root',
